@@ -1,0 +1,1279 @@
+create table train(train_no int, name varchar
+  2  (50),arrival_time int,departure_time int, train_date date,seats_available char);
+
+Table created.
+
+SQL> alter table train add primary key(train_no);
+
+Table altered.
+
+SQL> create table station(station_no int, name varchar9
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00907: missing right parenthesis
+
+
+SQL> create table station(station_no int, name varchar(50), arrival_time int, stop_time int, train_no int, foreign key (train_no) references train(train_no));
+
+Table created.
+
+SQL> create table train_status(train_no int, seats1A int, seats2A int, seats3A int, seatsSL int, seatsCC int);
+
+Table created.
+
+SQL> create table fares(train_no int, fare1A int, fare2A int, fare3A int, fareSL int, fareCC int);
+
+Table created.
+
+SQL> insert into train values(12711,'Rajdhani Express',1130,1133,to_date('11-12-2021','DD-MM-YYYY'),'A');
+
+1 row created.
+
+SQL> insert into train values(12704,'Shatabdi Express',2130,2135,to_date('13-12-2021','DD-MM-YYYY'),'A');
+
+1 row created.
+
+SQL> insert into train values(12390,'Dadar Express',0730,0734,to_date('12-12-2021','DD-MM-YYYY'),'A');
+
+1 row created.
+
+SQL> insert into train values(12621,'Chennai Express',0905,0910,to_date('12-12-2021','DD-MM-YYYY'),'A');
+
+1 row created.
+
+SQL> insert into train values(12210,'Navjeevan Express',1830,1835,to_date('14-12-2021','DD-MM-YYYY'),'A');
+
+1 row created.
+
+SQL> alter table station add primary key(station_no,train_no);
+
+Table altered.
+
+SQL> insert into station values(111,'Delhi',1130,5,12711);
+
+1 row created.
+
+SQL> update station set stop_time=3;
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into station values(222,'Mysore',2130,5,12704);
+
+1 row created.
+
+SQL> insert into station values(333,'Mumbai'
+  2  ,0730,4,12390);
+
+1 row created.
+
+SQL> insert into station values(444,'Chennai',0905,5,12621);
+
+1 row created.
+
+SQL> insert into station values(555,'Ahmedabad',1830,5,12210);
+
+1 row created.
+
+SQL> insert into station values(555,'Ahmedabad'330,10,12711);
+insert into station values(555,'Ahmedabad'330,10,12711)
+                                          *
+ERROR at line 1:
+ORA-00917: missing comma
+
+
+SQL> insert into station values(555,'Ahmedabad',330,10,12711);
+
+1 row created.
+
+SQL> alter table add column arrival_date date;
+alter table add column arrival_date date
+            *
+ERROR at line 1:
+ORA-00903: invalid table name
+
+
+SQL> alter table station add column arrival_date date;
+alter table station add column arrival_date date
+                        *
+ERROR at line 1:
+ORA-00904: : invalid identifier
+
+
+SQL> alter table add arrival_date date;
+alter table add arrival_date date
+            *
+ERROR at line 1:
+ORA-00903: invalid table name
+
+
+SQL> alter table station add arrival_date;
+alter table station add arrival_date
+                        *
+ERROR at line 1:
+ORA-02263: need to specify the datatype for this column
+
+
+SQL> alter table station add arrival_date date;
+
+Table altered.
+
+SQL> update station set arrival_time=1530 where stop_time=10;
+
+1 row updated.
+
+SQL> update station set arrival_date=to_date('11-12-2021,'DD-MM-YYYY'
+  2  ) where stop_time=10;
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> update station set arrival_date=to_date('11-12-2021','DD-MM-YYYY') where stop_time=10;
+
+1 row updated.
+
+SQL> select * from station'
+  2  ;
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> select * from station;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711
+
+       222 Mysore                                                     2130
+         5      12704
+
+       333 Mumbai                                                      730
+         4      12390
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     905
+         5      12621
+
+       555 Ahmedabad                                                  1830
+         5      12210
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+
+6 rows selected.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12711 order by arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Delhi                                                                1130
+Ahmedabad                                          11-DEC-21         1530
+
+SQL> insert into station values(444,'Chennai',0600,NULL,12711,to_date('12-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12711 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Ahmedabad                                          11-DEC-21         1530
+Chennai                                            12-DEC-21          600
+Delhi                                                                1130
+
+SQL> update station set arrival_date=to_date('11-12-2021','DD-MM-YYYY') where name='Delhi';
+
+1 row updated.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12711 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Delhi                                              11-DEC-21         1130
+Ahmedabad                                          11-DEC-21         1530
+Chennai                                            12-DEC-21          600
+
+SQL> select s.station_no,s.name,s.arrival_time from station s , train t where s.train_no=t.train_no and (t.train_no=12711 or t.name='Rajdhani Express');
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+       111 Delhi                                                      1130
+       555 Ahmedabad                                                  1530
+       444 Chennai                                                     600
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select s.station_no,s.name,s.arrival_time from station s , train t where s.train_no=t.train_no and (t.train_no=12711 or t.name='Rajdhani Express');
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+       111 Delhi                                                      1130
+       555 Ahmedabad                                                  1530
+       444 Chennai                                                     600
+
+SQL>  select s.station_no,s.name,s.arrival_date,s.arrival_time from station s , train t where s.train_no=t.train_no and (t.train_no=12711 or t.name='Rajdhani Express');
+
+STATION_NO NAME                                               ARRIVAL_D
+---------- -------------------------------------------------- ---------
+ARRIVAL_TIME
+------------
+       111 Delhi                                              11-DEC-21
+        1130
+
+       555 Ahmedabad                                          11-DEC-21
+        1530
+
+       444 Chennai                                            12-DEC-21
+         600
+
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into station values(444,'Chennai',0930,NULL,12704,to_date('14-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(555,'Ahmedabad',2200,NULL,12390,to_date('12-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(222,'Mysore',1330,20,12621,to_date('12-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(333,'Mumbai',2000,30,12621,to_date('12-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(444,'Chennai',0630,NULL,12621,to_date('13-12-2021','DD-MM-YYYY'));
+insert into station values(444,'Chennai',0630,NULL,12621,to_date('13-12-2021','DD-MM-YYYY'))
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C007436) violated
+
+
+SQL> commit;
+
+Commit complete.
+
+SQL> desc train_status;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ TRAIN_NO                                           NUMBER(38)
+ SEATS1A                                            NUMBER(38)
+ SEATS2A                                            NUMBER(38)
+ SEATS3A                                            NUMBER(38)
+ SEATSSL                                            NUMBER(38)
+ SEATSCC                                            NUMBER(38)
+
+SQL> select * from train_status;
+
+no rows selected
+
+SQL> insert into train_status values(12711,20,30,25,15,75,125);
+insert into train_status values(12711,20,30,25,15,75,125)
+            *
+ERROR at line 1:
+ORA-00913: too many values
+
+
+SQL>  insert into train_status values(12711,20,30,25,75,125);
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from station;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711 11-DEC-21
+
+       222 Mysore                                                     2130
+         5      12704
+
+       333 Mumbai                                                      730
+         4      12390
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     905
+         5      12621
+
+       555 Ahmedabad                                                  1830
+         5      12210
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     600
+                12711 12-DEC-21
+
+       444 Chennai                                                     930
+                12704 14-DEC-21
+
+       555 Ahmedabad                                                  2200
+                12390 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       222 Mysore                                                     1330
+        20      12621 12-DEC-21
+
+       333 Mumbai                                                     2000
+        30      12621 12-DEC-21
+
+
+11 rows selected.
+
+SQL> select name,arrival_time,arrival_date from station where train_no=12621 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_TIME ARRIVAL_D
+-------------------------------------------------- ------------ ---------
+Mysore                                                     1330 12-DEC-21
+Mumbai                                                     2000 12-DEC-21
+Chennai                                                     905
+
+SQL> update station set arrival_date=to_date
+  2  ('13-12-21','DD-MM-YYYY') where arrival_time=905;
+
+1 row updated.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date,arrival_time desc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mumbai                                             12-DEC-21         2000
+Mysore                                             12-DEC-21         1330
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date,arrival_time asc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_time,arrival_date;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name,arrival_date,arrival_time from station where train
+  2  _no=12621 order by arrival_date asc,arrival_time asc;
+_no=12621 order by arrival_date asc,arrival_time asc
+*
+ERROR at line 2:
+ORA-00911: invalid character
+
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date asc,arrival_time asc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_time asc,arrival_date asc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name from station where train_no=12621 order by arrival_time;
+
+NAME
+--------------------------------------------------
+Chennai
+Mysore
+Mumbai
+
+SQL> select name from station where train_no=12621 order by arrival_date asc;
+
+NAME
+--------------------------------------------------
+Chennai
+Mumbai
+Mysore
+
+SQL> select s.station_no,s.name,s.arrival_date,s.arrival_time from station s , train t where s.train_no=t.train_no and (t.train_no=12621 or t.name='Chennai Express');
+
+STATION_NO NAME                                               ARRIVAL_D
+---------- -------------------------------------------------- ---------
+ARRIVAL_TIME
+------------
+       444 Chennai                                            13-DEC-21
+         905
+
+       222 Mysore                                             12-DEC-21
+        1330
+
+       333 Mumbai                                             12-DEC-21
+        2000
+
+
+SQL> select name from station where train_no=12621 order by arrival_date desc,arrival_time asc;
+
+NAME
+--------------------------------------------------
+Mysore
+Mumbai
+Chennai
+
+SQL> select * from station where train_no=12210;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       555 Ahmedabad                                                  1830
+         5      12210
+
+
+SQL> update station set arrival_date=to_date('14-12-2021','DD-MM-YYYY') where train_no=12210;
+
+1 row updated.
+
+SQL> insert into station values(111,'Delhi',0230,20,12210,to_date('15-12-2021','DD-MM-YYYY');
+insert into station values(111,'Delhi',0230,20,12210,to_date('15-12-2021','DD-MM-YYYY')
+                                                                                      *
+ERROR at line 1:
+ORA-00917: missing comma
+
+
+SQL> insert into station values(111,'Delhi',0230,20,12210,to_date('15-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(333,'Mumbai',1300,NULL,12210,to_date('15-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> select name from station where train_no=12210 order by arrival_date desc,arrival_time asc;
+
+NAME
+--------------------------------------------------
+Delhi
+Mumbai
+Ahmedabad
+
+SQL> select name,arrival_date,arrival_time from station wherre train_no=12210 order by arrival_date desc,arrival_time asc;
+select name,arrival_date,arrival_time from station wherre train_no=12210 order by arrival_date desc,arrival_time asc
+                                                          *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12210 order by arrival_date desc,arrival_time asc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Delhi                                              15-DEC-21          230
+Mumbai                                             15-DEC-21         1300
+Ahmedabad                                          14-DEC-21         1830
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12210 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Ahmedabad                                          14-DEC-21         1830
+Delhi                                              15-DEC-21          230
+Mumbai                                             15-DEC-21         1300
+
+SQL> select name from station where train_no=12621 order by arrival_date desc,arrival_time asc;
+
+NAME
+--------------------------------------------------
+Mysore
+Mumbai
+Chennai
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date desc,arrival_time asc;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+Chennai                                            13-DEC-21          905
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12621 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            13-DEC-21          905
+Mysore                                             12-DEC-21         1330
+Mumbai                                             12-DEC-21         2000
+
+SQL> select name from station where train_no=12711 order by arrival_date,arrival_time;
+
+NAME
+--------------------------------------------------
+Delhi
+Ahmedabad
+Chennai
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12711 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Delhi                                              11-DEC-21         1130
+Ahmedabad                                          11-DEC-21         1530
+Chennai                                            12-DEC-21          600
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12704 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            14-DEC-21          930
+Mysore                                                               2130
+
+SQL> update station set arrival_date=to_date('14-12-21','DD-MM-YYYY') where train
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00920: invalid relational operator
+
+
+SQL> update station set arrival_date=to_date('14-12-21','DD-MM-YYYY') where train_no=12704;
+
+2 rows updated.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12704 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Chennai                                            14-DEC-21          930
+Mysore                                             14-DEC-21         2130
+
+SQL> update station set arrival_date=to_date('13-12-21','DD-MM-YYYY') where train_no=12704 and name='Mysore';
+
+1 row updated.
+
+SQL> select name,arrival_date,arrival_time from station where train_no=12704 order by arrival_date,arrival_time;
+
+NAME                                               ARRIVAL_D ARRIVAL_TIME
+-------------------------------------------------- --------- ------------
+Mysore                                             13-DEC-21         2130
+Chennai                                            14-DEC-21          930
+
+SQL> select * from train;
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12711 Rajdhani Express                                           1130
+          1133 11-DEC-21 A
+
+     12704 Shatabdi Express                                           2130
+          2135 13-DEC-21 A
+
+     12390 Dadar Express                                               730
+           734 12-DEC-21 A
+
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12621 Chennai Express                                             905
+           910 12-DEC-21 A
+
+     12210 Navjeevan Express                                          1830
+          1835 14-DEC-21 A
+
+
+SQL> select * from station;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711 11-DEC-21
+
+       222 Mysore                                                     2130
+         5      12704 13-DEC-21
+
+       333 Mumbai                                                      730
+         4      12390
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     905
+         5      12621 13-DEC-21
+
+       555 Ahmedabad                                                  1830
+         5      12210 14-DEC-21
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     600
+                12711 12-DEC-21
+
+       444 Chennai                                                     930
+                12704 14-DEC-21
+
+       555 Ahmedabad                                                  2200
+                12390 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       222 Mysore                                                     1330
+        20      12621 12-DEC-21
+
+       333 Mumbai                                                     2000
+        30      12621 12-DEC-21
+
+       111 Delhi                                                       230
+        20      12210 15-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       333 Mumbai                                                     1300
+                12210 15-DEC-21
+
+
+13 rows selected.
+
+SQL> select * from fares;
+
+no rows selected
+
+SQL> select * from train_status;
+
+  TRAIN_NO    SEATS1A    SEATS2A    SEATS3A    SEATSSL    SEATSCC
+---------- ---------- ---------- ---------- ---------- ----------
+     12711         20         30         25         75        125
+
+SQL> insert into train_status values(12704,25,25,30,50,25);
+
+1 row created.
+
+SQL> insert into train_status values(12390,20,30,25,50,40);
+
+1 row created.
+
+SQL> insert into train_status values(12621,30,30,30,60,30);
+
+1 row created.
+
+SQL> insert into train_status values(12210,25,25,30,60,25);
+
+1 row created.
+
+SQL> select * from train_status;
+
+  TRAIN_NO    SEATS1A    SEATS2A    SEATS3A    SEATSSL    SEATSCC
+---------- ---------- ---------- ---------- ---------- ----------
+     12711         20         30         25         75        125
+     12704         25         25         30         50         25
+     12390         20         30         25         50         40
+     12621         30         30         30         60         30
+     12210         25         25         30         60         25
+
+SQL> insert into fares values(12711,200,450,500,750,1250);
+
+1 row created.
+
+SQL> insert into fares values(12704,150,375.480,660,1000);
+insert into fares values(12704,150,375.480,660,1000)
+            *
+ERROR at line 1:
+ORA-00947: not enough values
+
+
+SQL> insert into fares values(12704,150,375,480,660,1000);
+
+1 row created.
+
+SQL> insert into fares values(12390,300,400,450,700,1200);
+
+1 row created.
+
+SQL> insert into fares values(12621,300,350,600,700,1000);
+
+1 row created.
+
+SQL> insert into fares values(12210,230,370,425,600,900);
+
+1 row created.
+
+SQL> select * from fares;
+
+  TRAIN_NO     FARE1A     FARE2A     FARE3A     FARESL     FARECC
+---------- ---------- ---------- ---------- ---------- ----------
+     12711        200        450        500        750       1250
+     12704        150        375        480        660       1000
+     12390        300        400        450        700       1200
+     12621        300        350        600        700       1000
+     12210        230        370        425        600        900
+
+SQL> commit;
+
+Commit complete.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> alter table station modify primary key(station_no,train_no,arrival_date);
+alter table station modify primary key(station_no,train_no,arrival_date)
+                                      *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> alter table station drop primary key;
+
+Table altered.
+
+SQL> alter table station add primary key( station_no,train_no,arrival_date);
+alter table station add primary key( station_no,train_no,arrival_date)
+                                                         *
+ERROR at line 1:
+ORA-01449: column contains NULL values; cannot alter to NOT NULL
+
+
+SQL> alter table station add primary key(station_no,train_no);
+
+Table altered.
+
+SQL> select * from station;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711 11-DEC-21
+
+       222 Mysore                                                     2130
+         5      12704 13-DEC-21
+
+       333 Mumbai                                                      730
+         4      12390
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     905
+         5      12621 13-DEC-21
+
+       555 Ahmedabad                                                  1830
+         5      12210 14-DEC-21
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     600
+                12711 12-DEC-21
+
+       444 Chennai                                                     930
+                12704 14-DEC-21
+
+       555 Ahmedabad                                                  2200
+                12390 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       222 Mysore                                                     1330
+        20      12621 12-DEC-21
+
+       333 Mumbai                                                     2000
+        30      12621 12-DEC-21
+
+       111 Delhi                                                       230
+        20      12210 15-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       333 Mumbai                                                     1300
+                12210 15-DEC-21
+
+
+13 rows selected.
+
+SQL> update station set arrival_date=to_date('12-12-2021','DD-MM-YYYY') where train_no=12390 and name='Mumbai';
+
+1 row updated.
+
+SQL> alter table station drop primary key;
+
+Table altered.
+
+SQL> alter table staion add primary key(station_no, train_no,arrival_date);
+alter table staion add primary key(station_no, train_no,arrival_date)
+*
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> alter table station add primary key(station_no, train_no,arrival_date);
+
+Table altered.
+
+SQL> insert into station values(111,'Delhi',2145,20,to_date('20-12-2021','DD-MM-YYYY'));
+insert into station values(111,'Delhi',2145,20,to_date('20-12-2021','DD-MM-YYYY'))
+            *
+ERROR at line 1:
+ORA-00947: not enough values
+
+
+SQL>  insert into station values(111,'Delhi',2145,NULL,12711,to_date('20-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from station where train_no=12711;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711 11-DEC-21
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+       444 Chennai                                                     600
+                12711 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      2145
+                12711 20-DEC-21
+
+
+SQL> select * from train;
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12711 Rajdhani Express                                           1130
+          1133 11-DEC-21 A
+
+     12704 Shatabdi Express                                           2130
+          2135 13-DEC-21 A
+
+     12390 Dadar Express                                               730
+           734 12-DEC-21 A
+
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12621 Chennai Express                                             905
+           910 12-DEC-21 A
+
+     12210 Navjeevan Express                                          1830
+          1835 14-DEC-21 A
+
+
+SQL> insert into station values(111,'Delhi',1845,NULL,12711,to_date('24-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> insert into station values(111,'Delhi',1515,NULL,12711,to_date('24-12-2021','DD-MM-YYYY'));
+insert into station values(111,'Delhi',1515,NULL,12711,to_date('24-12-2021','DD-MM-YYYY'))
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C007438) violated
+
+
+SQL>  insert into station values(111,'Delhi',1515,NULL,12711,to_date('29-12-2021','DD-MM-YYYY'));
+
+1 row created.
+
+SQL>  insert into station values(111,'Delhi',1205,NULL,12711,to_date('29-12-2021','DD-MM-YYYY'));
+ insert into station values(111,'Delhi',1205,NULL,12711,to_date('29-12-2021','DD-MM-YYYY'))
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C007438) violated
+
+
+SQL> insert into station values(111,'Delhi',1205,NULL,12711,to_date('04-01-2022','DD-MM-YYYY'));
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from train;
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12711 Rajdhani Express                                           1130
+          1133 11-DEC-21 A
+
+     12704 Shatabdi Express                                           2130
+          2135 13-DEC-21 A
+
+     12390 Dadar Express                                               730
+           734 12-DEC-21 A
+
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S
+-------------- --------- -
+     12621 Chennai Express                                             905
+           910 12-DEC-21 A
+
+     12210 Navjeevan Express                                          1830
+          1835 14-DEC-21 A
+
+
+SQL> alter table train
+  2  add arrival varchar(15);
+
+Table altered.
+
+SQL> alter table train
+  2  add departure varchar(15);
+
+Table altered.
+
+SQL> select * from train;
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S ARRIVAL         DEPARTURE
+-------------- --------- - --------------- ---------------
+     12711 Rajdhani Express                                           1130
+          1133 11-DEC-21 A
+
+     12704 Shatabdi Express                                           2130
+          2135 13-DEC-21 A
+
+     12390 Dadar Express                                               730
+           734 12-DEC-21 A
+
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S ARRIVAL         DEPARTURE
+-------------- --------- - --------------- ---------------
+     12621 Chennai Express                                             905
+           910 12-DEC-21 A
+
+     12210 Navjeevan Express                                          1830
+          1835 14-DEC-21 A
+
+
+SQL> alter table train drop column departure;
+
+Table altered.
+
+SQL> alter table train add column destination varchar915);
+alter table train add column destination varchar915)
+                      *
+ERROR at line 1:
+ORA-00904: : invalid identifier
+
+
+SQL> alter table train add destination varchar(15);
+
+Table altered.
+
+SQL> update train set arrival='Delhi' where train_no=12711;
+
+1 row updated.
+
+SQL> update train set Destination='Chennai' where train_no=12711;
+
+1 row updated.
+
+SQL> update train set arrival='Mysore' where train_no=12704;
+
+1 row updated.
+
+SQL> update train set arrival='Mumbai' where train_no=12390;
+
+1 row updated.
+
+SQL> update train set arrival='Chennai' where train_no=12621;
+
+1 row updated.
+
+SQL> update train set arrival='Ahmedabad' where train_no=12210;
+
+1 row updated.
+
+SQL> select name from station where train_no=12704
+  2  ;
+
+NAME
+--------------------------------------------------
+Mysore
+Chennai
+
+SQL> update train set Destination='Chennai' where train_no=12711;
+
+1 row updated.
+
+SQL> update train set Destination='Chennai' where train_no=12704;
+
+1 row updated.
+
+SQL> select name from station where train_no=12390;
+
+NAME
+--------------------------------------------------
+Mumbai
+Ahmedabad
+
+SQL> update train set Destination='Ahmedabad' where train_no=12390;
+
+1 row updated.
+
+SQL> select name from station where train_no=12621;
+
+NAME
+--------------------------------------------------
+Chennai
+Mysore
+Mumbai
+
+SQL> update train set Destination='Mumbai' where train_no=12621;
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from train;
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S ARRIVAL         DESTINATION
+-------------- --------- - --------------- ---------------
+     12711 Rajdhani Express                                           1130
+          1133 11-DEC-21 A Delhi           Chennai
+
+     12704 Shatabdi Express                                           2130
+          2135 13-DEC-21 A Mysore          Chennai
+
+     12390 Dadar Express                                               730
+           734 12-DEC-21 A Mumbai          Ahmedabad
+
+
+  TRAIN_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+DEPARTURE_TIME TRAIN_DAT S ARRIVAL         DESTINATION
+-------------- --------- - --------------- ---------------
+     12621 Chennai Express                                             905
+           910 12-DEC-21 A Chennai         Mumbai
+
+     12210 Navjeevan Express                                          1830
+          1835 14-DEC-21 A Ahmedabad
+
+
+SQL> select * from station;
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1130
+         3      12711 11-DEC-21
+
+       222 Mysore                                                     2130
+         5      12704 13-DEC-21
+
+       333 Mumbai                                                      730
+         4      12390 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     905
+         5      12621 13-DEC-21
+
+       555 Ahmedabad                                                  1830
+         5      12210 14-DEC-21
+
+       555 Ahmedabad                                                  1530
+        10      12711 11-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       444 Chennai                                                     600
+                12711 12-DEC-21
+
+       444 Chennai                                                     930
+                12704 14-DEC-21
+
+       555 Ahmedabad                                                  2200
+                12390 12-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       222 Mysore                                                     1330
+        20      12621 12-DEC-21
+
+       333 Mumbai                                                     2000
+        30      12621 12-DEC-21
+
+       111 Delhi                                                       230
+        20      12210 15-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       333 Mumbai                                                     1300
+                12210 15-DEC-21
+
+       111 Delhi                                                      2145
+                12711 20-DEC-21
+
+       111 Delhi                                                      1845
+                12711 24-DEC-21
+
+
+STATION_NO NAME                                               ARRIVAL_TIME
+---------- -------------------------------------------------- ------------
+ STOP_TIME   TRAIN_NO ARRIVAL_D
+---------- ---------- ---------
+       111 Delhi                                                      1515
+                12711 29-DEC-21
+
+       111 Delhi                                                      1205
+                12711 04-JAN-22
+
+
+17 rows selected.
+
+SQL> select * from train_status;
+
+  TRAIN_NO    SEATS1A    SEATS2A    SEATS3A    SEATSSL    SEATSCC
+---------- ---------- ---------- ---------- ---------- ----------
+     12711         20         30         25         75        125
+     12704         25         25         30         50         25
+     12390         20         30         25         50         40
+     12621         30         30         30         60         30
+     12210         25         25         30         60         25
+
+SQL> select * from fares;
+
+  TRAIN_NO     FARE1A     FARE2A     FARE3A     FARESL     FARECC
+---------- ---------- ---------- ---------- ---------- ----------
+     12711        200        450        500        750       1250
+     12704        150        375        480        660       1000
+     12390        300        400        450        700       1200
+     12621        300        350        600        700       1000
+     12210        230        370        425        600        900
+
+SQL>
