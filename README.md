@@ -1,2 +1,2 @@
 # Railway-Enquiry-System
-A project based on the Railway Enquiry using Tkinter and MySql.
+A mini Project based on the Railway Enquiries using Tkinter and MySql.
